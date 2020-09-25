@@ -6,29 +6,27 @@
 '''
 函数功能：读取数据集中样本，并进行可视化
 '''
-
 import csv
-import tensorflow as tf 
+import tensorflow as tf
 import matplotlib.pyplot as plt
-get_ipython().run_line_magic('matplotlib', 'inline')
 
 def readImgs():
-    
+
     ################################ 读取csv文件 #################################
-       
+
     '''
     要求：根据preparation中的train.csv文件路径，读取并解析csv文件
     提示：
         本考点涉及路径编写、csv文件打开、csv文件解析，请参考preparation
     '''
-    csv_file_path = '''***'''                   # 编写csv数据文件的路径
-    csv_file = '''***'''                        # 打开csv文件
-    csv_data = '''***'''                        # 解析csv文件数据     第1处待补全
-    list_read = list(csv_data)                                        # 将读取的数据转化为列表格式  
+    csv_file_path = '''***'''                  # 编写csv数据文件的路径
+    csv_file ='''***'''                        # 打开csv文件
+    csv_data = '''***'''                       # 解析csv文件数据     第1处待补全
+    list_read = list(csv_data)                                        # 将读取的数据转化为列表格式
 
     ############################# 读取图片，并保存 ##############################
-    sample_1_info= list_read[1]                               # 取出第1个样本（sample1）的图像路径和标签   
-    
+    sample_1_info= list_read[1]                               # 取出第1个样本（sample1）的图像路径和标签
+
     '''
     要求：根据csv文件中的信息（样本图像路径和标签），调用tensorflow.io内函数，读取并解析第1个样本
     提示：
@@ -43,17 +41,20 @@ def readImgs():
     sample_1_path = '''***'''            # 获取sample1的图片路径
     sample_1_label = '''***'''           # 获取sample1的标签
     sample_1_file = '''***'''            # 根据sample1的图片路径，打开图片文件
-    sample_1_data = '''***'''            # 解析图片文件数据，获取灰度图像    第2处待补全 
-    
+    sample_1_data = '''***'''            # 解析图片文件数据，获取灰度图像    第2处待补全
+
     ############################### 图像显示 #####################################
-    img_show = tf.reshape(sample_1_data,(227,227))   
+    img_show = tf.reshape(sample_1_data,(227,227))
     plt.imshow(img_show,cmap='gray')
-    plt.show() 
-    print('该图的标签为：{}'.format(sample1_label))
-                     
-    return img_show,sample1_label
+    plt.show()
+    print('该图的标签为：{}'.format(sample_1_label))
+
+    return img_show,sample_1_label
 # test
 img,label = readImgs()
+
+# expectation
+# 该图的标签为0
 
 ################################################### section 3 初识梯度消失 #####################################
 #### problem 2 梯度可视化
@@ -86,28 +87,29 @@ def grad_show(data_file_name):
                   loss='binary_crossentropy',
                   metrics=['accuracy'])
     
+
     '''
     要求：请参考preparation中TensorBoard的介绍，调用TensorBoard，构造tensorboard的回调函数，且：
         （1）每个epoch保存一次模型参数等数据
         （2）保存到'./model_tensorboard_1'路径下
     '''
     tb_call = '''***'''          # 第3处待补全
-    
-    model.fit(x=data_x, 
-              y=data_y, 
-              batch_size=50, 
-              epochs=0, 
-              verbose=0, 
+
+    model.fit(x=data_x,
+              y=data_y,
+              batch_size=50,
+              epochs=0,
+              verbose=0,
               callbacks=[tb_call])
     return model    
 
-
 # test
 data_file_name = './ignoreme/ignoreme/data.xls'
-   
 model = grad_show(data_file_name)
 print('tensorboard配置成功')
 
+# expectation
+# tensorboard配置成功
 
 ################################################### section 4 梯度消失详解 #####################################
 #### problem 3 计算w的更新量
@@ -140,6 +142,9 @@ def cal_delta_w1():
 delta_w11 = cal_delta_w1()
 print("delta_w11的输出为：{}".format(delta_w11.numpy()))
 
+# expectation
+# delta_w11的输出为：-0.000255573
+
 ################################################### section 5 梯度爆炸的解决 #####################################
 #### problem 4 掌握batch normalization
 
@@ -161,18 +166,20 @@ def my_batch_norm(a, gamma, beta):
     '''
     要求：请调用tensorflow中相关函数，实现对输入数据a进行batch normalization操作
     '''
-    a_mean = '''***'''        # 计算输入数据的均值
-    a_var = '''***'''         # 计算输入数据的方差
-    a_norm = '''***'''        # 计算输入数据的归一化   
-    a_out = '''***'''         # 计算batch norm后的输出   第5处待补全                     
-    
-    return a_out    
+    a_mean = '''***'''         # 计算输入数据的均值
+    a_var = '''***'''          # 计算输入数据的方差
+    a_norm = '''***'''         # 计算输入数据的归一化
+    a_out = '''***'''          # 计算batch norm后的输出   第5处待补全
 
+    return a_out
 #test
 input_data = tf.constant([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0])
 output_data = my_batch_norm(input_data, 0.01, 0.1)
 print(output_data.numpy())
 
+# expectation
+# [0.08433301 0.08781456 0.09129612 0.09477767 0.09825923 0.10174078
+#  0.10522233 0.10870388 0.11218544 0.11566699]
 
 ################################################### section 6 DNN的欢喜冤家 #####################################
 #### problem 5 实现mini-batch的数据流
@@ -204,9 +211,9 @@ def gen_flow_data(root_path, csv_name, batchsize):
         out_y = []                            # 定义当前这个mini-batch的输出列表out_y，以保存标签数据
         
         '''
-        要求：请参考preparation中的mini batch生成的流程，为下面while循环添加条件语句
-        '''    
-        while '''***''':        # 第6处待补全
+        要求：请参考preparation中的mini batch生成的流程，为下面while循环添加合适的条件语句，使得函数每次生成batchsize个样本
+        '''
+        while False:       #  False 为第6处待补全
             if num == m:                # 若当前已处理到最后一张图片了，则混洗数据，并重新开始从0计数
                 num = 0
                 x, y = data_shuffle(x, y)     # 数据混洗，将原数据顺序打乱，重新排序            
@@ -220,9 +227,9 @@ def gen_flow_data(root_path, csv_name, batchsize):
         out_y = tf.reshape(out_y,(-1,1))           # 将y标签整理维度为m行1列
         
         yield (out_x, out_y)
+
 # test
 import matplotlib.pyplot as plt
-get_ipython().run_line_magic('matplotlib', 'inline')
 
 data_root_path = './ignoreme'
 csv_name = 'train.csv'
@@ -232,6 +239,11 @@ train_gen = gen_flow_data(data_root_path, csv_name, batch_size)
 mini_batch_x, mini_batch_y = next(train_gen)
 print("mini-batch的数据维度为：\n x:{} \n y:{}".format(mini_batch_x.shape, mini_batch_y.shape))
 train_gen.close()
+
+# expectation
+# mini-batch的数据维度为：
+# x:(2, 51529)
+# y:(2, 1)
 
 #### problem 6 实现数据增强
 '''
@@ -244,42 +256,46 @@ train_gen.close()
 '''
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 import tensorflow as tf
-import matplotlib.pyplot as plt
-get_ipython().run_line_magic('matplotlib', 'inline')
+
 
 def data_augmentation(img_path,img_label):
-    
-    ################################### 读取图像数据 ################################  
-    img_data = tf.io.read_file(img_path)    
+
+    ################################### 读取图像数据 ################################
+    img_data = tf.io.read_file(img_path)
     img_data = tf.io.decode_jpeg(img_data,channels=1)       # 通过图像路径，读取该张图片
-    
+
     ################################ 图像数据增强规则 ##############################
     '''
     要求：请参考preparation中的ImageDataGenerator介绍，补全数据增强规则为：随机旋转度数范围为±10°
     '''
-    da = ImageDataGenerator('''***''')     # 第7处待补全       
-    
+    da = ImageDataGenerator('''***''')     # 第7处待补全
+
     ##################################### 数据增强 #################################
-    img_data = tf.reshape([img_data],(1,227,227,1))      
+    img_data = tf.reshape([img_data],(1,227,227,1))
     new_img_data, new_img_label = next(da.flow(img_data,img_label,batch_size=1))
-    
+
     ##################################### 图像显示 #################################
     print('原图像：')
     img_data = tf.reshape(img_data,(227,227))
     plt.imshow(img_data,cmap='gray')
     plt.show()
-       
+
     print('数据增强图像：')
     new_img_data = tf.reshape(new_img_data,(227,227))
     plt.imshow(new_img_data,cmap='gray')
     plt.show()
-    
-    return new_img_data 
+
+    return img_data, new_img_data
+
 # test
+import matplotlib.pyplot as plt
+
 img_path = './ignoreme/dataSet/test_000001.jpg'
 img_label = [0.0]
-out = data_augmentation(img_path,img_label)
+img_data, new_img_data = data_augmentation(img_path,img_label)
 
+# expectation
+# 两张图像
 
 
 ################################################### section 7 过拟合的解决 #####################################
@@ -296,27 +312,27 @@ out = data_augmentation(img_path,img_label)
 from tensorflow.keras import callbacks
 
 def lr_scheduler(epoch, lr):  
-    
+
     '''
     要求：请按照preparation中的learning rate decay公式，实现lr的回调函数，且：decay_rate = 0.9
     提示：虽然每次回调时均会传入epoch，但是我们此处并没有用到
-    '''    
-    lr =  '''***'''                  # 第8处待补全
-    lr_epochs.append(lr)                                     # 保存新的学习率   
+    '''
+    lr =  '''***'''                 # 第8处待补全
+    lr_epochs.append(lr)                                     # 保存新的学习率
     return lr                                                # 返回新的学习率
 
 lr_decay = callbacks.LearningRateScheduler(lr_scheduler)     # learning rate decay
+lr_epochs = []                                               # 用于保存每次迭代训练中的学习率
  
 # test
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
 from tensorflow.keras.optimizers import SGD
+import numpy as np
 
 import matplotlib.pyplot as plt
-get_ipython().run_line_magic('matplotlib', 'inline')
 
 epoch_num = 100                                   # 定义当前模型训练的迭代次数
-lr_epochs = []                                    # 用于保存每次迭代训练中的学习率
 model = Sequential([Dense(10)])                   # 搭建模型
 model.compile(SGD(lr=0.1), loss='mse')            # 配置模型
 model.fit(np.arange(50).reshape(2, 25), np.ones(2),         
@@ -326,6 +342,9 @@ plt.plot(range(epoch_num), lr_epochs, '-o')       # 画图生成epoch与lr的关
 plt.xlabel("epoch")
 plt.ylabel("learning rate")
 plt.show()
+
+# expectation
+# 一张图像
 
 ################################################### section 8 回顾和总结 #####################################
 #### problem 8 DNN解决狗狗分类问题
@@ -343,15 +362,15 @@ from tensorflow.keras.optimizers import SGD
 from tensorflow.keras.callbacks import TensorBoard, EarlyStopping, ReduceLROnPlateau
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 def dnn_train(train_csv, test_csv):
-       
+
     ############################### 分批装载数据 ##################################
     batchSize = 32
     root_path = './ignoreme'
     train_gen = gen_flow_data(root_path, train_csv, batchSize)   # 训练集进行数据增强
     test_gen = gen_flow_data(root_path, test_csv, batchSize)         # 测试集不进行数据增强
-        
+
     ############################### 模型搭建  ###################################
-    
+
     '''
     要求：
         构造由全连接层构成的5层神经网络，层与层之间添加batch-norm，其中layer1已给出，请补全layer2~layer5，且：
@@ -362,7 +381,7 @@ def dnn_train(train_csv, test_csv):
     提示：可参考layer1的模型搭建方法
     '''
     model = Sequential([
-        Dense(256, activation='relu', input_shape=(227*227,)), # layer1 
+        Dense(256, activation='relu', input_shape=(227*227,)), # layer1
         BatchNormalization(),                                  # batch norm
         '''***''',                         # layer2
         '''***''',                         # batch norm
@@ -371,12 +390,12 @@ def dnn_train(train_csv, test_csv):
         '''***''',                         # layer4
         '''***''',                         # batch norm
         '''***'''])                        # layer5      # 第9处待补全
-    
+
     ############################## 模型配置 #####################################
     model.compile(optimizer=SGD(lr = 0.001),
                   loss='binary_crossentropy',
-                  metrics=['accuracy']) 
-    
+                  metrics=['accuracy'])
+
     ############################# 回调函数配置 ##################################
     '''
     要求：
@@ -386,23 +405,23 @@ def dnn_train(train_csv, test_csv):
         （3）ReduceLROnPlateau的监控指标为'loss'，若连续5个epoch的loss下降幅度小于0.0001，则lr = lr * 0.2；
     提示：以上各函数的使用方法，请参考preparation
     '''
-    tb_call = '''***'''      
-    es_call = '''***'''      
-    lr_call = '''***'''      # 第10处待补全
-    
+    tb_call = '''***'''
+    es_call = '''***'''
+    lr_call = '''***'''     # 第10处待补全
+
     ################################ 模型训练 ####################################
-    train_num = 370   
+    train_num = 370
     history = model.fit(train_gen,
                       steps_per_epoch=(train_num//batchSize),
                       epochs=0,
                       verbose=0,
-                      callbacks=[tb_call,es_call,lr_call])  
-    
+                      callbacks=[tb_call,es_call,lr_call])
+
     train_gen.close()
     ################################ 模型评估 ####################################
     loss, acc = model.evaluate(test_gen, steps=1, verbose=0)
     test_gen.close()
-        
+
     return model
 # test
 from ignoreme.ignoreme.utils import verify_model_dnn
@@ -411,3 +430,6 @@ test_csv = 'test.csv'
 model = dnn_train(train_csv, test_csv)
 verify_model_dnn(model)
 
+# expectation
+# 模型已搭建成功
+# 您的模型在dog数据集上的精度为90%左右
